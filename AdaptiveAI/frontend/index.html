@@ -295,90 +295,110 @@ footer{text-align:center;padding:30px;opacity:.5;}
 <footer>© 2026 AdaptiveAI Pro X</footer>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+// ✅ Ensure script runs AFTER everything
+window.onload = function () {
 
 console.log("JS LOADED ✅");
 
+// Backend URL
 const API = "https://adaptive-ai.onrender.com";
 
 // ================= BUTTON FIX =================
-const uploadBtn = document.querySelector(".btn");
 
-if (!uploadBtn) {
-    console.error("Button not found ❌");
+// Select FIRST button safely
+const buttons = document.querySelectorAll(".btn");
+
+if (buttons.length === 0) {
+    console.error("Buttons not found ❌");
     return;
 }
 
-uploadBtn.addEventListener("click", () => {
-    console.log("Button clicked ✅");
+// Upload button = first one
+const uploadBtn = buttons[0];
+
+uploadBtn.onclick = function () {
+
+    console.log("Upload Button Clicked ✅");
 
     const input = document.createElement("input");
     input.type = "file";
 
-    input.onchange = async () => {
-        const file = input.files[0];
-        if (!file) return;
+    input.onchange = async function () {
 
-        console.log("File selected ✅");
+        const file = input.files[0];
+
+        if (!file) {
+            alert("No file selected");
+            return;
+        }
+
+        console.log("File Selected ✅");
 
         const formData = new FormData();
         formData.append("file", file);
 
         try {
-            const res = await fetch(`${API}/upload/resume`, {
+            const res = await fetch(API + "/upload/resume", {
                 method: "POST",
                 body: formData
             });
 
             const data = await res.json();
+
             console.log("API Response:", data);
 
-            alert("✅ WORKING SUCCESSFULLY");
+            alert("✅ Backend Connected Successfully");
 
-        } catch (err) {
-            console.error(err);
-            alert("❌ API FAILED");
+        } catch (error) {
+            console.error("ERROR:", error);
+            alert("❌ Backend Failed");
         }
     };
 
     input.click();
-});
+};
 
-// ================= DRAG DROP =================
+// ================= DRAG & DROP =================
+
 const uploadBox = document.querySelector(".upload");
 
 if (uploadBox) {
-    uploadBox.addEventListener("dragover", e => e.preventDefault());
 
-    uploadBox.addEventListener("drop", async (e) => {
+    uploadBox.addEventListener("dragover", function (e) {
+        e.preventDefault();
+    });
+
+    uploadBox.addEventListener("drop", async function (e) {
+
         e.preventDefault();
 
         const file = e.dataTransfer.files[0];
+
         if (!file) return;
 
         const formData = new FormData();
         formData.append("file", file);
 
         try {
-            const res = await fetch(`${API}/upload/resume`, {
+            const res = await fetch(API + "/upload/resume", {
                 method: "POST",
                 body: formData
             });
 
             const data = await res.json();
-            console.log("Drag Upload:", data);
 
-            alert("✅ DRAG WORKING");
+            console.log("Drag Response:", data);
 
-        } catch (err) {
-            console.error(err);
-            alert("❌ DRAG FAILED");
+            alert("✅ Drag Upload Working");
+
+        } catch (error) {
+            console.error(error);
+            alert("❌ Drag Upload Failed");
         }
     });
 }
 
-});
-
+};
 </script>
 </body>
 </html>
