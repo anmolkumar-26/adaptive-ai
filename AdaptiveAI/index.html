@@ -295,65 +295,55 @@ footer{text-align:center;padding:30px;opacity:.5;}
 <footer>© 2026 AdaptiveAI Pro X</footer>
 
 <script>
-console.log("SCRIPT STARTED ✅");
+console.log("✅ JS FILE LOADED");
 
-window.onload = function () {
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("✅ DOM READY");
 
-    console.log("WINDOW LOADED ✅");
+    const btn = document.querySelector(".btn");
 
-    const API = "https://adaptive-ai.onrender.com";
-
-    const uploadBtn = document.querySelector(".btn");
-
-    if (!uploadBtn) {
+    if (!btn) {
         console.error("❌ Button not found");
         return;
     }
 
-    uploadBtn.onclick = function () {
-        console.log("✅ Button clicked");
+    btn.onclick = function () {
+        console.log("🔥 BUTTON CLICK WORKING");
 
         const input = document.createElement("input");
         input.type = "file";
 
         input.onchange = async function () {
-
             const file = input.files[0];
+
             if (!file) {
-                console.log("❌ No file selected");
+                alert("No file selected");
                 return;
             }
-
-            console.log("✅ File selected");
 
             const formData = new FormData();
             formData.append("file", file);
 
             try {
-                console.log("🚀 Sending request...");
-
-                // ✅ FIXED FETCH (THIS WAS THE PROBLEM)
-                const res = await fetch("https://adaptive-ai.onrender.com/upload", {
+                const res = await fetch("https://adaptive-ai.onrender.com/upload/resume", {
                     method: "POST",
                     body: formData
                 });
 
-                console.log("STATUS:", res.status);
-
                 const data = await res.json();
-                console.log("✅ RESPONSE:", data);
+                console.log(data);
 
-                alert("SUCCESS");
+                alert("✅ Upload Success");
 
             } catch (err) {
-                console.error("❌ ERROR:", err);
-                alert("FAILED");
+                console.error(err);
+                alert("❌ API FAILED");
             }
         };
 
         input.click();
     };
-};
+});
 </script>
 </body>
 </html>
