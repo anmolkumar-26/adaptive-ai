@@ -295,17 +295,31 @@ footer{text-align:center;padding:30px;opacity:.5;}
 <footer>© 2026 AdaptiveAI Pro X</footer>
 
 <script>
+document.addEventListener("DOMContentLoaded", () => {
+
 console.log("JS LOADED ✅");
 
 const API = "https://adaptive-ai.onrender.com";
 
-// Upload button
-document.querySelectorAll(".btn")[0].onclick = () => {
+// ================= BUTTON FIX =================
+const uploadBtn = document.querySelector(".btn");
+
+if (!uploadBtn) {
+    console.error("Button not found ❌");
+    return;
+}
+
+uploadBtn.addEventListener("click", () => {
+    console.log("Button clicked ✅");
+
     const input = document.createElement("input");
     input.type = "file";
 
     input.onchange = async () => {
         const file = input.files[0];
+        if (!file) return;
+
+        console.log("File selected ✅");
 
         const formData = new FormData();
         formData.append("file", file);
@@ -317,40 +331,54 @@ document.querySelectorAll(".btn")[0].onclick = () => {
             });
 
             const data = await res.json();
-            console.log(data);
+            console.log("API Response:", data);
 
-            alert("✅ Backend Connected");
+            alert("✅ WORKING SUCCESSFULLY");
 
         } catch (err) {
             console.error(err);
-            alert("❌ Error");
+            alert("❌ API FAILED");
         }
     };
 
     input.click();
-};
+});
 
-// Drag drop
+// ================= DRAG DROP =================
 const uploadBox = document.querySelector(".upload");
 
-uploadBox.addEventListener("dragover", e => e.preventDefault());
+if (uploadBox) {
+    uploadBox.addEventListener("dragover", e => e.preventDefault());
 
-uploadBox.addEventListener("drop", async (e) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
+    uploadBox.addEventListener("drop", async (e) => {
+        e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("file", file);
+        const file = e.dataTransfer.files[0];
+        if (!file) return;
 
-    const res = await fetch(`${API}/upload/resume`, {
-        method: "POST",
-        body: formData
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const res = await fetch(`${API}/upload/resume`, {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await res.json();
+            console.log("Drag Upload:", data);
+
+            alert("✅ DRAG WORKING");
+
+        } catch (err) {
+            console.error(err);
+            alert("❌ DRAG FAILED");
+        }
     });
+}
 
-    const data = await res.json();
-    console.log(data);
-    alert("✅ Drag Upload Working");
 });
+
 </script>
 </body>
 </html>
