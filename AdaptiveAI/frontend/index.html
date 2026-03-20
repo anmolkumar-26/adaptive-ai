@@ -295,60 +295,85 @@ footer{text-align:center;padding:30px;opacity:.5;}
 <footer>© 2026 AdaptiveAI Pro X</footer>
 
 <script>
-const API_BASE = "https://adaptive-ai.onrender.com";
+const API = "https://adaptive-ai.onrender.com";
 
-// ================== SCROLL ==================
-const sections=document.querySelectorAll("section");
-window.addEventListener("scroll",()=>{
-sections.forEach(sec=>{
-if(sec.getBoundingClientRect().top<window.innerHeight-100){
-sec.classList.add("show");
+// ================== UPLOAD ==================
+async function uploadResume(file){
+const formData = new FormData();
+formData.append("file", file);
+
+try{
+
+// STEP 1: Upload Resume
+const uploadRes = await fetch(`${API}/upload/resume`, {
+method: "POST",
+body: formData
+});
+const uploadData = await uploadRes.json();
+console.log("Upload:", uploadData);
+
+// STEP 2: Extract Skills
+const skillsRes = await fetch(`${API}/analysis/extract-skills`, {
+method: "POST"
+});
+const skillsData = await skillsRes.json();
+console.log("Skills:", skillsData);
+
+// STEP 3: Skill Gap
+const gapRes = await fetch(`${API}/analysis/skill-gap`, {
+method: "POST"
+});
+const gapData = await gapRes.json();
+console.log("Gap:", gapData);
+
+// STEP 4: Roadmap
+const roadmapRes = await fetch(`${API}/roadmap/`, {
+method: "POST"
+});
+const roadmapData = await roadmapRes.json();
+console.log("Roadmap:", roadmapData);
+
+// UPDATE UI
+updateUI(skillsData, gapData, roadmapData);
+
+alert("✅ Full AI Pipeline Working!");
+
+}catch(err){
+console.error(err);
+alert("❌ Backend Error");
 }
-});
-});
-
-// ================== TYPING ==================
-let text="Analyzing Resume → Mapping Skills → Generating AI Roadmap...";
-let i=0;
-(function typing(){
-if(i<text.length){
-document.getElementById("typing").innerHTML+=text.charAt(i);
-i++;setTimeout(typing,30);
 }
-})();
 
-// ================== SKILL ANIMATION ==================
-const fills=document.querySelectorAll(".fill");
-window.addEventListener("scroll",()=>{
-fills.forEach(f=>{
-if(f.getBoundingClientRect().top<window.innerHeight){
-f.style.width=f.dataset.width;
+// ================== UI UPDATE ==================
+function updateUI(skillsData, gapData, roadmapData){
+
+// Insights cards
+const cards = document.querySelectorAll(".grid .card");
+
+if(cards.length >= 3){
+cards[0].innerHTML = `⚠ Skill Gap: ${gapData?.gap || "System Design"}`;
+cards[1].innerHTML = `💪 Strength: ${skillsData?.skills?.[0] || "Python"}`;
+cards[2].innerHTML = `🚀 Recommend: Backend + Cloud`;
 }
-});
-});
 
-// ================== TIMELINE ==================
-let steps=document.querySelectorAll(".step");
-let idx=0;
-setInterval(()=>{
-steps.forEach(s=>s.classList.remove("active"));
-steps[idx].classList.add("active");
-idx=(idx+1)%steps.length;
-},1400);
+// Skills bars
+const fills = document.querySelectorAll(".fill");
+if(fills.length >= 3){
+fills[0].style.width = "85%";
+fills[1].style.width = "65%";
+fills[2].style.width = "40%";
+}
 
-// ================== FILE UPLOAD ==================
-const uploadBox = document.querySelector(".upload");
+// Roadmap
+const roadmapDiv = document.querySelector(".roadmap");
+if(roadmapData?.roadmap){
+roadmapDiv.innerHTML = roadmapData.roadmap.map(r =>
+`<div class="road">${r}</div>`
+).join("");
+}
+}
 
-// Drag & Drop
-uploadBox.addEventListener("dragover", e => e.preventDefault());
-
-uploadBox.addEventListener("drop", async (e)=>{
-e.preventDefault();
-const file = e.dataTransfer.files[0];
-if(file) await uploadResume(file);
-});
-
-// Button Upload
+// ================== BUTTON ==================
 document.querySelectorAll(".btn")[0].onclick = () => {
 const input = document.createElement("input");
 input.type = "file";
@@ -356,52 +381,16 @@ input.onchange = () => uploadResume(input.files[0]);
 input.click();
 };
 
-// ================== API CALL ==================
-async function uploadResume(file){
-const formData = new FormData();
-formData.append("file", file);
+// ================== DRAG DROP ==================
+const uploadBox = document.querySelector(".upload");
 
-try{
-const res = await fetch(`${API_BASE}/upload`, {
-method: "POST",
-body: formData
+uploadBox.addEventListener("dragover", e => e.preventDefault());
+
+uploadBox.addEventListener("drop", (e)=>{
+e.preventDefault();
+const file = e.dataTransfer.files[0];
+if(file) uploadResume(file);
 });
-
-const data = await res.json();
-updateUI(data);
-
-}catch(err){
-console.error(err);
-alert("Backend connection failed!");
-}
-}
-
-// ================== UPDATE UI ==================
-function updateUI(data){
-
-// Insights
-const cards = document.querySelectorAll(".grid .card");
-if(data.skills){
-cards[0].innerHTML = `⚠ Skill Gap: ${data.skills[2] || "System Design"}`;
-cards[1].innerHTML = `💪 Strength: ${data.skills[0] || "Python"}`;
-cards[2].innerHTML = `🚀 Recommend: ${data.role || "Backend"}`;
-}
-
-// Skills bars
-const skillBars = document.querySelectorAll(".fill");
-if(data.skills){
-skillBars[0].style.width = "85%";
-skillBars[1].style.width = "65%";
-skillBars[2].style.width = "40%";
-}
-
-// Roadmap
-const roadmapDiv = document.querySelector(".roadmap");
-if(data.roadmap){
-roadmapDiv.innerHTML = data.roadmap.map(r=>`<div class="road">${r}</div>`).join("");
-}
-
-}
 </script>
 </body>
 </html>
