@@ -1,8 +1,23 @@
-from fastapi import FastAPI
 from fastapi import FastAPI, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI()
+app = FastAPI(title="AdaptiveAI Backend")
 
+# ✅ CORS (IMPORTANT)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ✅ ROOT CHECK
+@app.get("/")
+def root():
+    return {"message": "AdaptiveAI Running 🚀"}
+
+# ✅ UPLOAD API
 @app.post("/upload")
 async def upload(file: UploadFile = File(...)):
     return {
@@ -15,24 +30,3 @@ async def upload(file: UploadFile = File(...)):
             "Week 4: System Design"
         ]
     }
-from fastapi.middleware.cors import CORSMiddleware
-from backend.routes import upload, analysis, roadmap, reasoning
-
-app = FastAPI(title="AdaptiveAI Backend")
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-app.include_router(upload.router)
-app.include_router(analysis.router)
-app.include_router(roadmap.router)
-app.include_router(reasoning.router)
-
-@app.get("/")
-def root():
-    return {"message": "AdaptiveAI Running 🚀"}
