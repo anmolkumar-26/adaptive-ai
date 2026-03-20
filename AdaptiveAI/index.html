@@ -332,48 +332,11 @@ window.onload = function () {
             try {
                 console.log("🚀 Sending request...");
 
+                // ✅ FIXED FETCH (THIS WAS THE PROBLEM)
                 const res = await fetch("https://adaptive-ai.onrender.com/upload", {
-    method: "POST",
-    body: formData
-}), {
                     method: "POST",
                     body: formData
                 });
-                uploadBtn.addEventListener("click", async () => {
-    try {
-        console.log("Button clicked");
-
-        const input = document.createElement("input");
-        input.type = "file";
-
-        input.onchange = async () => {
-            const file = input.files[0];
-
-            const formData = new FormData();
-            formData.append("file", file);
-
-            console.log("Sending request...");
-
-            const res = await fetch("https://adaptive-ai.onrender.com/upload", {
-                method: "POST",
-                body: formData
-            });
-
-            console.log("Response:", res);
-
-            const data = await res.json();
-            console.log("Data:", data);
-
-            alert("✅ Upload Success");
-        };
-
-        input.click();
-
-    } catch (err) {
-        console.error("ERROR:", err);
-        alert("❌ API FAILED");
-    }
-});
 
                 console.log("STATUS:", res.status);
 
