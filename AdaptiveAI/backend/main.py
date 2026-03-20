@@ -1,4 +1,20 @@
 from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File
+
+app = FastAPI()
+
+@app.post("/upload")
+async def upload(file: UploadFile = File(...)):
+    return {
+        "skills": ["Python", "ML", "System Design"],
+        "role": "Backend Developer",
+        "roadmap": [
+            "Week 1: Backend Basics",
+            "Week 2: APIs",
+            "Week 3: Databases",
+            "Week 4: System Design"
+        ]
+    }
 from fastapi.middleware.cors import CORSMiddleware
 from backend.routes import upload, analysis, roadmap, reasoning
 
