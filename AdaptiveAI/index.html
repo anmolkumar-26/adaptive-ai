@@ -295,67 +295,101 @@ footer{text-align:center;padding:30px;opacity:.5;}
 <footer>© 2026 AdaptiveAI Pro X</footer>
 
 <script>
-
-// FORCE RUN CHECK
 console.log("SCRIPT STARTED ✅");
 
-window.onload = () => {
+window.onload = function () {
 
-    console.log("JS LOADED ✅");
+    console.log("WINDOW LOADED ✅");
 
     const API = "https://adaptive-ai.onrender.com";
-console.log("API URL:", API);
 
-    // ===== FIX BUTTON SELECTION =====
-    const uploadBtn = document.querySelectorAll(".btn")[0];
+    const uploadBtn = document.querySelector(".btn");
 
     if (!uploadBtn) {
-        console.error("Upload button not found ❌");
+        console.error("❌ Button not found");
         return;
     }
 
-    uploadBtn.addEventListener("click", () => {
-
-        console.log("Upload button clicked ✅");
+    uploadBtn.onclick = function () {
+        console.log("✅ Button clicked");
 
         const input = document.createElement("input");
         input.type = "file";
 
-        input.onchange = async () => {
+        input.onchange = async function () {
 
             const file = input.files[0];
-
             if (!file) {
-                alert("No file selected");
+                console.log("❌ No file selected");
                 return;
             }
 
-            console.log("File selected ✅");
+            console.log("✅ File selected");
 
             const formData = new FormData();
             formData.append("file", file);
 
             try {
-                const res = await fetch(API + "/upload/resume", {
+                console.log("🚀 Sending request...");
+
+                const res = await fetch("https://adaptive-ai.onrender.com/upload", {
+    method: "POST",
+    body: formData
+}), {
                     method: "POST",
                     body: formData
                 });
+                uploadBtn.addEventListener("click", async () => {
+    try {
+        console.log("Button clicked");
+
+        const input = document.createElement("input");
+        input.type = "file";
+
+        input.onchange = async () => {
+            const file = input.files[0];
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            console.log("Sending request...");
+
+            const res = await fetch("https://adaptive-ai.onrender.com/upload", {
+                method: "POST",
+                body: formData
+            });
+
+            console.log("Response:", res);
+
+            const data = await res.json();
+            console.log("Data:", data);
+
+            alert("✅ Upload Success");
+        };
+
+        input.click();
+
+    } catch (err) {
+        console.error("ERROR:", err);
+        alert("❌ API FAILED");
+    }
+});
+
+                console.log("STATUS:", res.status);
 
                 const data = await res.json();
+                console.log("✅ RESPONSE:", data);
 
-                console.log("API RESPONSE:", data);
-
-                alert("✅ WORKING PERFECTLY");
+                alert("SUCCESS");
 
             } catch (err) {
-                console.error("ERROR:", err);
-                alert("❌ API FAILED");
+                console.error("❌ ERROR:", err);
+                alert("FAILED");
             }
         };
 
         input.click();
-    });
-
+    };
 };
 </script>
 </body>
