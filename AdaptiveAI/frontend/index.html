@@ -262,14 +262,6 @@ footer{text-align:center;padding:30px;opacity:.5;}
 <div class="skill">ML<div class="bar"><div class="fill" data-width="65%"></div></div></div>
 <div class="skill">System Design<div class="bar"><div class="fill" data-width="40%"></div></div></div>
 </section>
-<textarea id="resumeInput"></textarea>
-
-<button id="extractBtn">Extract Skills</button>
-
-<div id="output"></div>
-input type="file" id="resumeFile" />
-<button onclick="uploadResume()">Upload Resume</button>
-
 
 <!-- ROADMAP -->
 <section>
@@ -302,9 +294,114 @@ input type="file" id="resumeFile" />
 
 <footer>© 2026 AdaptiveAI Pro X</footer>
 
+<script>
+const API_BASE = "https://adaptive-ai.onrender.com";
 
+// ================== SCROLL ==================
+const sections=document.querySelectorAll("section");
+window.addEventListener("scroll",()=>{
+sections.forEach(sec=>{
+if(sec.getBoundingClientRect().top<window.innerHeight-100){
+sec.classList.add("show");
+}
+});
+});
 
-<script src="script.js"></script>
+// ================== TYPING ==================
+let text="Analyzing Resume → Mapping Skills → Generating AI Roadmap...";
+let i=0;
+(function typing(){
+if(i<text.length){
+document.getElementById("typing").innerHTML+=text.charAt(i);
+i++;setTimeout(typing,30);
+}
+})();
 
+// ================== SKILL ANIMATION ==================
+const fills=document.querySelectorAll(".fill");
+window.addEventListener("scroll",()=>{
+fills.forEach(f=>{
+if(f.getBoundingClientRect().top<window.innerHeight){
+f.style.width=f.dataset.width;
+}
+});
+});
+
+// ================== TIMELINE ==================
+let steps=document.querySelectorAll(".step");
+let idx=0;
+setInterval(()=>{
+steps.forEach(s=>s.classList.remove("active"));
+steps[idx].classList.add("active");
+idx=(idx+1)%steps.length;
+},1400);
+
+// ================== FILE UPLOAD ==================
+const uploadBox = document.querySelector(".upload");
+
+// Drag & Drop
+uploadBox.addEventListener("dragover", e => e.preventDefault());
+
+uploadBox.addEventListener("drop", async (e)=>{
+e.preventDefault();
+const file = e.dataTransfer.files[0];
+if(file) await uploadResume(file);
+});
+
+// Button Upload
+document.querySelectorAll(".btn")[0].onclick = () => {
+const input = document.createElement("input");
+input.type = "file";
+input.onchange = () => uploadResume(input.files[0]);
+input.click();
+};
+
+// ================== API CALL ==================
+async function uploadResume(file){
+const formData = new FormData();
+formData.append("file", file);
+
+try{
+const res = await fetch(`${API_BASE}/upload`, {
+method: "POST",
+body: formData
+});
+
+const data = await res.json();
+updateUI(data);
+
+}catch(err){
+console.error(err);
+alert("Backend connection failed!");
+}
+}
+
+// ================== UPDATE UI ==================
+function updateUI(data){
+
+// Insights
+const cards = document.querySelectorAll(".grid .card");
+if(data.skills){
+cards[0].innerHTML = `⚠ Skill Gap: ${data.skills[2] || "System Design"}`;
+cards[1].innerHTML = `💪 Strength: ${data.skills[0] || "Python"}`;
+cards[2].innerHTML = `🚀 Recommend: ${data.role || "Backend"}`;
+}
+
+// Skills bars
+const skillBars = document.querySelectorAll(".fill");
+if(data.skills){
+skillBars[0].style.width = "85%";
+skillBars[1].style.width = "65%";
+skillBars[2].style.width = "40%";
+}
+
+// Roadmap
+const roadmapDiv = document.querySelector(".roadmap");
+if(data.roadmap){
+roadmapDiv.innerHTML = data.roadmap.map(r=>`<div class="road">${r}</div>`).join("");
+}
+
+}
+</script>
 </body>
 </html>
