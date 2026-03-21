@@ -316,5 +316,24 @@ async function uploadResume(){
   i.click();
 }
 </script>
+<script>
+async function uploadResume(){
+  const i=document.createElement("input");
+  i.type="file";
+  i.onchange=async function(){
+    const f=i.files[0];
+    if(!f)return;
+    const d=new FormData();
+    d.append("file",f);
+    try{
+      const r=await fetch("https://adaptive-ai.onrender.com/upload",{method:"POST",body:d});
+      const j=await r.json();
+      document.querySelector(".roadmap").innerHTML=j.roadmap.map(x=>`<div class="road">${x}</div>`).join("");
+      alert("Role: "+j.role);
+    }catch(e){alert("Error: "+e.message);}
+  };
+  i.click();
+}
+</script>
 </body>
 </html>
