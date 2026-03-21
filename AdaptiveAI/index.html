@@ -295,30 +295,25 @@ footer{text-align:center;padding:30px;opacity:.5;}
 <footer>© 2026 AdaptiveAI Pro X</footer>
 
 <script>
-async function uploadResume() {
-  const input = document.createElement("input");
-  input.type = "file";
-  input.onchange = async function() {
-    const file = input.files[0];
-    if (!file) return;
-    const formData = new FormData();
-    formData.append("file", file);
-    try {
-      const res = await fetch("https://adaptive-ai.onrender.com/upload", {
-        method: "POST",
-        body: formData
-      });
-      const data = await res.json();
-      console.log("✅ DATA:", data);
-      document.querySelector(".roadmap").innerHTML =
-        data.roadmap.map(r => `<div class="road">${r}</div>`).join("");
-      alert("✅ Success! Role: " + data.role);
-    } catch(err) {
-      console.error(err);
-      alert("❌ Failed: " + err.message);
+async function uploadResume(){
+  const i = document.createElement("input");
+  i.type = "file";
+  i.onchange = async function(){
+    const f = i.files[0];
+    if(!f) return;
+    const d = new FormData();
+    d.append("file", f);
+    try{
+      const r = await fetch("https://adaptive-ai.onrender.com/upload",{method:"POST",body:d});
+      const j = await r.json();
+      console.log(j);
+      document.querySelector(".roadmap").innerHTML = j.roadmap.map(x=>`<div class="road">${x}</div>`).join("");
+      alert("Success! Role: "+j.role);
+    }catch(e){
+      alert("Failed: "+e.message);
     }
   };
-  input.click();
+  i.click();
 }
 </script>
 </body>
