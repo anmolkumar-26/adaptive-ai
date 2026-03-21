@@ -325,15 +325,16 @@ document.addEventListener("DOMContentLoaded", function () {
             formData.append("file", file);
 
             try {
-                const res = await fetch("https://adaptive-ai.onrender.com/upload/resume", {
+                const res = await fetch("https://adaptive-ai.onrender.com/upload", {
                     method: "POST",
                     body: formData
                 });
 
                 const data = await res.json();
                 console.log(data);
-
-                alert("✅ Upload Success");
+                document.querySelector(".roadmap").innerHTML = data.roadmap.map(item => `<div class="road">${item}</div>`).join("");
+                document.querySelector(".timeline").innerHTML = data.skills.map(s => `<div class="step active">✅ ${s}</div>`).join("");
+                 alert("✅ Upload Success! Check Roadmap & Skills sections.");
 
             } catch (err) {
                 console.error(err);
