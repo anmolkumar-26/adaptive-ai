@@ -295,56 +295,31 @@ footer{text-align:center;padding:30px;opacity:.5;}
 <footer>© 2026 AdaptiveAI Pro X</footer>
 
 <script>
-console.log("✅ JS FILE LOADED");
-
-document.addEventListener("DOMContentLoaded", function () {
-    console.log("✅ DOM READY");
-
-    const btn = document.querySelector(".btn");
-
-    if (!btn) {
-        console.error("❌ Button not found");
-        return;
+async function uploadResume() {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.onchange = async function() {
+    const file = input.files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append("file", file);
+    try {
+      const res = await fetch("https://adaptive-ai.onrender.com/upload", {
+        method: "POST",
+        body: formData
+      });
+      const data = await res.json();
+      console.log("✅ DATA:", data);
+      document.querySelector(".roadmap").innerHTML =
+        data.roadmap.map(r => `<div class="road">${r}</div>`).join("");
+      alert("✅ Success! Role: " + data.role);
+    } catch(err) {
+      console.error(err);
+      alert("❌ Failed: " + err.message);
     }
-
-    btn.onclick = function () {
-        console.log("🔥 BUTTON CLICK WORKING");
-
-        const input = document.createElement("input");
-        input.type = "file";
-
-        input.onchange = async function () {
-            const file = input.files[0];
-
-            if (!file) {
-                alert("No file selected");
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append("file", file);
-
-            try {
-                const res = await fetch("https://adaptive-ai.onrender.com/upload", {
-                    method: "POST",
-                    body: formData
-                });
-
-                const data = await res.json();
-                console.log(data);
-                document.querySelector(".roadmap").innerHTML = data.roadmap.map(item => `<div class="road">${item}</div>`).join("");
-                document.querySelector(".timeline").innerHTML = data.skills.map(s => `<div class="step active">✅ ${s}</div>`).join("");
-                 alert("✅ Upload Success! Check Roadmap & Skills sections.");
-
-            } catch (err) {
-                console.error(err);
-                alert("❌ API FAILED");
-            }
-        };
-
-        input.click();
-    };
-});
+  };
+  input.click();
+}
 </script>
 </body>
 </html>
